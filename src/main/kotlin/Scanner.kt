@@ -104,7 +104,7 @@ class Scanner(filename: String) {
     }
 
     private fun isChar(c: Char): Boolean {
-        return c in 'a'..'z' || c in 'A'..'Z'
+        return c in 'a'..'z'
     }
 
     private fun isOperator(c: Char): Boolean {
@@ -133,7 +133,7 @@ class Scanner(filename: String) {
     }
 
     private fun isEOF(): Boolean {
-        return pos >= (content.size - 1)
+        return pos >= content.size
     }
 
     private fun back() {
