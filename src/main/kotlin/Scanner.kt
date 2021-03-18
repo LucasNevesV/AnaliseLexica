@@ -32,7 +32,6 @@ class Scanner(filename: String) {
         var token: Token? = null
         while (token == null) {
             currentChar = nextChar()
-
             when (estado) {
                 0 -> token = estado0()
                 1 -> token = estado1()
@@ -174,7 +173,7 @@ class Scanner(filename: String) {
     }
 
     private fun isEOF(): Boolean {
-        return pos >= content.size - 1
+        return pos >= content.size
     }
 
     private fun isEOF(c: Char): Boolean {
