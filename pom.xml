@@ -6,7 +6,7 @@
 
     <artifactId>AnaliseLexica</artifactId>
     <groupId>me.lucasnevesdevasconcelos</groupId>
-    <version></version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>consoleApp</name>
