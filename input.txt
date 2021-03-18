@@ -1,7 +1,6 @@
 main teste(){
-    int numero 10
+    int numero 10{
     if(nume >= 5.6){
 
     }
 }
-
