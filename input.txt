@@ -1,5 +1,7 @@
- abc123 123
-aaa
-1.5
-123
-as
+main teste(){
+    int numero 10
+    if(nume >= 5.6){
+
+    }
+}
+

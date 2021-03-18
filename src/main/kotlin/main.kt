@@ -13,6 +13,6 @@ fun main(args: Array<String>) {
             }
         } while (token != null)
     } catch (ex: LexicalException) {
-        println("Lexical ERROR; Message: $ex")
+        println("Lexical ERROR at '${ex.term}'; Message: ${ex.message}")
     }
 }

@@ -6,8 +6,6 @@ class Scanner(filename: String) {
     private lateinit var content: CharArray
     private var estado: Int = 0
     private var pos: Int = 0
-    private var line: Int = 0
-    private var column: Int = 0
 
     private var currentChar: Char = '\u0000'
     private var term: String = ""
@@ -30,77 +28,113 @@ class Scanner(filename: String) {
         }
         estado = 0
         term = ""
-        while (true) {
+
+        var token: Token? = null
+        while (token == null) {
             currentChar = nextChar()
+
             when (estado) {
-                0 -> estado0()
-                1 -> estado1()
-                2 -> return estado2()
-                3 -> estado3()
-                4 -> return estado4()
+                0 -> token = estado0()
+                1 -> token = estado1()
+                2 -> token = estado2()
+                3 -> token = estado3()
             }
         }
+        return token
     }
 
-    private fun estado0() {
+    //Estado Inicial
+    private fun estado0(): Token? {
         when {
-            isChar(currentChar) -> {
+            isChar(currentChar) || specialChars(currentChar.toString()) || currentChar == '_' -> {
                 term += currentChar
                 estado = 1
             }
             isDigit(currentChar) -> {
                 term += currentChar
-                estado = 3
+                estado = 2
             }
             isSpace(currentChar) -> {
                 estado = 0
             }
-            isOperator(currentChar) -> {
-                estado = 5
-            }
-            else -> throw LexicalException("Unrecognized SYMBOL")
-        }
-    }
-
-    private fun estado1() {
-        when {
-            isChar(currentChar) || isDigit(currentChar) -> {
-                term += currentChar
-                estado = 1
-            }
-            isSpace(currentChar) || isOperator(currentChar) -> {
-                estado = 2
-            }
-            else -> throw LexicalException("Malformed Identifier")
-        }
-    }
-
-    private fun estado2(): Token {
-        back()
-        return Token(TokenTypes.TK_IDENTIFIER.ordinal, term)
-    }
-
-    private fun estado3() {
-        when {
-            isDigit(currentChar) -> {
+            isOperator(currentChar) || isArithmeticOperator(currentChar.toString()) -> {
                 term += currentChar
                 estado = 3
             }
-            !isChar(currentChar) -> {
-                estado = 4
-            }
-            else -> throw LexicalException("Unrecognized Number")
+            else -> throw LexicalException("Unrecognized SYMBOL", term + currentChar)
         }
+        return null
     }
 
-    private fun estado4(): Token {
-        back()
-        return Token(TokenTypes.TK_NUMBER.ordinal, term)
+    //Estado Identificadores
+    private fun estado1(): Token? {
+        when {
+            specialChars(term) -> {
+                if (!isEOF(currentChar))
+                    back()
+                return Token(TokenTypes.TK_SPECIAL_CHAR, term)
+            }
+            isChar(currentChar) || isDigit(currentChar) || currentChar == '_' -> {
+                term += currentChar
+                estado = 1
+            }
+            isSpace(currentChar) || isOperator(currentChar) || isEOF(currentChar) || specialChars(currentChar.toString()) -> {
+                if (!isEOF(currentChar))
+                    back()
+
+                return when {
+                    reservedWords(term) -> Token(TokenTypes.TK_RESERVED_WORD, term)
+                    specialChars(term) -> Token(TokenTypes.TK_SPECIAL_CHAR, term)
+                    else -> Token(TokenTypes.TK_IDENTIFIER, term)
+                }
+            }
+            else -> throw LexicalException("Malformed Identifier", term + currentChar)
+        }
+        return null
+    }
+
+    //Estado Numeros(Inteiro e Float)
+    private fun estado2(): Token? {
+        when {
+            isDigit(currentChar) || currentChar == '.' -> {
+                term += currentChar
+                estado = 2
+            }
+            !isChar(currentChar) || isEOF(currentChar) -> {
+                if (!isEOF(currentChar))
+                    back()
+                return Token(TokenTypes.TK_NUMBER, term)
+            }
+            else -> throw LexicalException("Unrecognized Number", term + currentChar)
+        }
+        return null
+    }
+
+    //Estado Operadores()
+    private fun estado3(): Token? {
+        when {
+            isOperator(currentChar) -> {
+                term += currentChar
+                estado = 3
+            }
+            isChar(currentChar) || isDigit(currentChar) || isSpace(currentChar) || isEOF(currentChar) -> {
+                if (!isEOF(currentChar))
+                    back()
+
+                return if (isArithmeticOperator(term)) {
+                    Token(TokenTypes.TK_ARITHMETIC_OPERATOR, term)
+                } else {
+                    Token(TokenTypes.TK_RELATIONAL_OPERATOR, term)
+                }
+            }
+            else -> throw LexicalException("Unrecognized Operator", term + currentChar)
+        }
+        return null
     }
 
     //region utils
     private fun isDigit(c: Char): Boolean {
-        return c in '0'..'9' || c == '.'
+        return c in '0'..'9'
     }
 
     private fun isChar(c: Char): Boolean {
@@ -109,16 +143,23 @@ class Scanner(filename: String) {
 
     private fun isOperator(c: Char): Boolean {
         val operators = listOf(
-            '>', '<', '=', '!', '+', '-', '*', '/'
+            '>', '<', '=', '!', "<=", ">=", "==", "!="
         )
+
+        if (term.isNotBlank())
+            return operators.contains(term + c)
+
         return operators.contains(c)
     }
 
+    private fun isArithmeticOperator(text: String): Boolean {
+        val operators = listOf(
+            "+", "-", "*", "/"
+        )
+        return operators.contains(text)
+    }
+
     private fun isSpace(c: Char): Boolean {
-        if (c == '\n' || c == '\r') {
-            line++
-            column = 0
-        }
         val spaces = listOf(
             ' ', '\t', '\n', '\r'
         )
@@ -133,7 +174,25 @@ class Scanner(filename: String) {
     }
 
     private fun isEOF(): Boolean {
-        return pos >= content.size
+        return pos >= content.size - 1
+    }
+
+    private fun isEOF(c: Char): Boolean {
+        return c == '\u0000'
+    }
+
+    private fun reservedWords(text: String): Boolean {
+        val operators = listOf(
+            "main", "if", "else", "while", "do", "for", "int", "float", "char"
+        )
+        return operators.contains(text)
+    }
+
+    private fun specialChars(text: String): Boolean {
+        val operators = listOf(
+            ")", "(", "{", "}", ",", ";"
+        )
+        return operators.contains(text)
     }
 
     private fun back() {
