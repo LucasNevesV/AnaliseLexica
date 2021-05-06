@@ -37,7 +37,6 @@ class Loop(private val scanner: Scanner) {
     }
 
     fun expectClosingParenthesis(){
-        scanner.nextToken()
         if (TokenSingleton.text != ")") {
             throw SyntaxException("')' expected, found '${scanner.term}'", scanner.term)
         }

@@ -8,6 +8,7 @@ fun main(args: Array<String>) {
         val parser = Parser(scanner)
 
         parser.program()
+        println("Compiled successfully !!")
     } catch (ex: LexicalException) {
         println("Lexical ERROR at '${ex.term}'; Message: ${ex.message}")
     } catch (ex: SyntaxException) {

@@ -1,12 +1,19 @@
 int main() {
 
-    int b = 0;
-    int x = 15.5;
+    int b = 0, e = 5;
+    char x = 15;
+
+    while (b == x) {
+       if (b == x) {
+               b = b + 2;
+           } else {
+               b = b + 5 + 8;
+           }
+    }
 
     if (b == x) {
-        b = b + a;
-    }
-    if (b == x) {
-        b = b + a
+        b = b + 2;
+    } else {
+        b = b + 5 + 8;
     }
 }
