@@ -9,7 +9,6 @@ class Scanner(filename: String) {
 
     private var currentChar: Char = '\u0000'
     var term: String = ""
-    var cuurentToken: Token? = null
 
     init {
         try {
@@ -45,7 +44,7 @@ class Scanner(filename: String) {
                 3 -> token = estado3()
             }
         }
-        cuurentToken = token
+        TokenSingleton.init(token)
         return token
     }
 

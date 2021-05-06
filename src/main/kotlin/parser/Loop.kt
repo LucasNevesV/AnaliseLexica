@@ -4,7 +4,7 @@ import Scanner
 import Token
 import exception.SyntaxException
 
-class Loop(private var token: Token?, private val scanner: Scanner) {
+class Loop(private val scanner: Scanner) {
     init {
         loop()
     }
@@ -13,14 +13,14 @@ class Loop(private var token: Token?, private val scanner: Scanner) {
         expectWhile()
         expectOpeningParenthesis()
 
-        ConditionalOperation(token,scanner)
+        ConditionalOperation(scanner)
 
         expectClosingParenthesis()
-        Block(token, scanner)
+        Block(scanner)
     }
 
     private fun checkWhile(): Boolean {
-        return token!!.text == "while"
+        return TokenSingleton.text == "while"
     }
 
     private fun expectWhile() {
@@ -30,15 +30,15 @@ class Loop(private var token: Token?, private val scanner: Scanner) {
     }
 
     private fun expectOpeningParenthesis(){
-        token = scanner.nextToken()
-        if (token!!.text != "(") {
+        scanner.nextToken()
+        if (TokenSingleton.text != "(") {
             throw SyntaxException("'(' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     fun expectClosingParenthesis(){
-        token = scanner.nextToken()
-        if (token!!.text != ")") {
+        scanner.nextToken()
+        if (TokenSingleton.text != ")") {
             throw SyntaxException("')' expected, found '${scanner.term}'", scanner.term)
         }
     }

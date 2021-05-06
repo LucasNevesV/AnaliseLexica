@@ -4,7 +4,7 @@ import Scanner
 import Token
 import exception.SyntaxException
 
-class Declaration(private var token: Token?, private val scanner: Scanner) {
+class Declaration(private val scanner: Scanner) {
 
     lateinit var typeDeclaration: String
 
@@ -19,7 +19,7 @@ class Declaration(private var token: Token?, private val scanner: Scanner) {
         expectNextAttrOperatorOrSemicolonOrComma()
 
         if (isAttributionOperator()) {
-            Arithmetic(token, scanner)
+            Arithmetic(scanner)
         }else if(isComma()){
             declaration(true)
         }
@@ -27,13 +27,13 @@ class Declaration(private var token: Token?, private val scanner: Scanner) {
     }
 
     private fun expectSemicolon() {
-        if (token!!.text != ";") {
+        if (TokenSingleton.text != ";") {
             throw SyntaxException("';' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun expectVariableTypeDeclaration(){
-        val tokenText = token!!.text
+        val tokenText = TokenSingleton.text
         if (!check()){
             throw SyntaxException("'type Declaration Expected' expected, found '${scanner.term}'", scanner.term)
         }
@@ -42,40 +42,40 @@ class Declaration(private var token: Token?, private val scanner: Scanner) {
     }
 
     private fun expectIdentifier(){
-        token = scanner.nextToken()
-        if (token!!.type != TokenTypes.TK_IDENTIFIER){
+        scanner.nextToken()
+        if (TokenSingleton.type != TokenTypes.TK_IDENTIFIER){
             throw SyntaxException("'identifier Expected' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun expectNextAttrOperatorOrSemicolonOrComma(){
-        token = scanner.nextToken()
+        scanner.nextToken()
         if (!isAttributionOperator() && !isComma() && !isSemicolon()){
             throw SyntaxException("'attribution operator Expected' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun expectCurrentAttrOperatorOrSemicolonOrComma(){
-        token = scanner.nextToken()
+        scanner.nextToken()
         if (!isAttributionOperator() && !isComma() && !isSemicolon()){
             throw SyntaxException("'attribution operator, semicolon or comma Expected' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun isComma(): Boolean {
-        return token!!.text == ","
+        return TokenSingleton.text == ","
     }
 
     private fun isSemicolon(): Boolean {
-        return token!!.text == ";"
+        return TokenSingleton.text == ";"
     }
 
     private fun isAttributionOperator(): Boolean {
-        return token!!.text == "="
+        return TokenSingleton.text == "="
     }
 
     private fun check(): Boolean {
-        val tokenText = token!!.text
+        val tokenText = TokenSingleton.text
         return tokenText == "int" ||  tokenText =="float" || tokenText == "char"
     }
 }

@@ -4,7 +4,7 @@ import Scanner
 import Token
 import exception.SyntaxException
 
-class Arithmetic(var token: Token?, val scanner: Scanner) {
+class Arithmetic(val scanner: Scanner) {
     init {
         arithmetic()
     }
@@ -15,7 +15,7 @@ class Arithmetic(var token: Token?, val scanner: Scanner) {
     }
 
     private fun arithmeticLoop() {
-        token = scanner.nextToken()
+        val token = scanner.nextToken()
         if (token != null && checkCompatibility()) {
             expectArithmeticOperator()
             expectNumberOrIdentifier()
@@ -24,22 +24,22 @@ class Arithmetic(var token: Token?, val scanner: Scanner) {
     }
 
     fun expectArithmeticOperator() {
-        if (token!!.type != TokenTypes.TK_ARITHMETIC_OPERATOR && token!!.type != TokenTypes.TK_RELATIONAL_OPERATOR) {
+        if (TokenSingleton.type != TokenTypes.TK_ARITHMETIC_OPERATOR && TokenSingleton.type != TokenTypes.TK_RELATIONAL_OPERATOR) {
             throw SyntaxException(
-                "Operator Expected, found " + token!!.type + " (" + token!!.text + ")", scanner.term
+                "Operator Expected, found " + TokenSingleton.type + " (" + TokenSingleton.text + ")", scanner.term
             )
         }
     }
 
     private fun expectNumberOrIdentifier() {
-        token = scanner.nextToken()
-        if (token!!.type != TokenTypes.TK_IDENTIFIER && token!!.type != TokenTypes.TK_NUMBER) {
+        scanner.nextToken()
+        if (TokenSingleton.type != TokenTypes.TK_IDENTIFIER && TokenSingleton.type != TokenTypes.TK_NUMBER) {
             throw SyntaxException("'identifier or number Expected' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun checkCompatibility(): Boolean {
-        return token!!.type == TokenTypes.TK_IDENTIFIER || token!!.type == TokenTypes.TK_NUMBER ||
-                (token!!.type == TokenTypes.TK_ARITHMETIC_OPERATOR && token!!.text != "=")
+        return TokenSingleton.type == TokenTypes.TK_IDENTIFIER || TokenSingleton.type == TokenTypes.TK_NUMBER ||
+                (TokenSingleton.type == TokenTypes.TK_ARITHMETIC_OPERATOR && TokenSingleton.text != "=")
     }
 }

@@ -6,59 +6,29 @@ import exception.SyntaxException
 
 class Parser(private val scanner: Scanner) {
 
-    private var token: Token? = null
 
     fun program() {
-        token = scanner.nextToken()
+        val token = scanner.nextToken()
 
-        if (token!!.text != "int") {
+        TokenSingleton.init(token!!)
+
+        if (TokenSingleton.text != "int") {
             throw SyntaxException("'int' expected, found '${scanner.term}'", scanner.term)
         }
 
-        token = scanner.nextToken()
-        if (token!!.text != "main") {
+        scanner.nextToken()
+        if (TokenSingleton.text != "main") {
             throw SyntaxException("'main' expected, found '${scanner.term}'", scanner.term)
         }
-        token = scanner.nextToken()
-        if (token!!.text != "(") {
+        scanner.nextToken()
+        if (TokenSingleton.text != "(") {
             throw SyntaxException("'(' expected, found '${scanner.term}'", scanner.term)
         }
-        token = scanner.nextToken()
-        if (token!!.text != ")") {
+        scanner.nextToken()
+        if (TokenSingleton.text != ")") {
             throw SyntaxException("')' expected, found '${scanner.term}'", scanner.term)
         }
 
-        Block(token, scanner)
+        Block(scanner)
     }
-
-    //region Expressão Aritmetica
-    fun expressaoAritmetica() {
-        operando()
-        expressaoAritmeticaLoop()
-    }
-
-    fun expressaoAritmeticaLoop() {
-        token = scanner.nextToken()
-        if (token != null) {
-            operador()
-            operando()
-            expressaoAritmeticaLoop()
-        }
-    }
-
-    fun operando() {
-        token = scanner.nextToken()
-        if (token!!.type != TokenTypes.TK_IDENTIFIER && token!!.type != TokenTypes.TK_NUMBER) {
-            throw SyntaxException("ID or NUMBER Expected!, found " + token!!.type, scanner.term)
-        }
-    }
-
-    fun operador() {
-        if (token!!.type != TokenTypes.TK_ARITHMETIC_OPERATOR && token!!.type != TokenTypes.TK_RELATIONAL_OPERATOR) {
-            throw SyntaxException(
-                "Operator Expected, found " + token!!.type + " (" + token!!.text + ")", scanner.term
-            )
-        }
-    }
-    //endregion
 }

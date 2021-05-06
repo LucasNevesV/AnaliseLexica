@@ -4,17 +4,17 @@ import Scanner
 import Token
 import exception.SyntaxException
 
-class Attribution(private var token: Token?, private val scanner: Scanner) {
+class Attribution(private val scanner: Scanner) {
     init {
         attribution()
     }
 
     private fun attribution(loop:Boolean = false){
-        if (!loop) expectIdentifier()
+        if (loop) expectIdentifier()
 
         expectNextAttrOperatorOrSemicolonOrComma()
 
-        Arithmetic(token, scanner)
+        Arithmetic(scanner)
 
         expectCurrentAttrOperatorOrSemicolonOrComma()
 
@@ -23,35 +23,34 @@ class Attribution(private var token: Token?, private val scanner: Scanner) {
         }
     }
     private fun expectIdentifier(){
-        token = scanner.nextToken()
-        if (token!!.type != TokenTypes.TK_IDENTIFIER){
+        scanner.nextToken()
+        if (TokenSingleton.type != TokenTypes.TK_IDENTIFIER){
             throw SyntaxException("'identifier Expected' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun expectNextAttrOperatorOrSemicolonOrComma(){
-        token = scanner.nextToken()
+        scanner.nextToken()
         if (!isAttributionOperator() && !isComma() && !isSemicolon()){
             throw SyntaxException("'attribution operator Expected' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun expectCurrentAttrOperatorOrSemicolonOrComma(){
-        token = scanner.nextToken()
         if (!isAttributionOperator() && !isComma() && !isSemicolon()){
             throw SyntaxException("'attribution operator, semicolon or comma Expected' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun isComma(): Boolean {
-        return token!!.text == ","
+        return TokenSingleton.text == ","
     }
 
     private fun isSemicolon(): Boolean {
-        return token!!.text == ";"
+        return TokenSingleton.text == ";"
     }
 
     private fun isAttributionOperator(): Boolean {
-        return token!!.text == "="
+        return TokenSingleton.text == "="
     }
 }

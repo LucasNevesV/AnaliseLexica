@@ -5,27 +5,33 @@ import Token
 import exception.SyntaxException
 
 
-class Block(var token: Token?, val scanner: Scanner) {
+class Block(val scanner: Scanner) {
 
     init {
         block()
     }
 
+    var jump: Boolean = false
+
     private fun block() {
         expectedOpenBrackets()
 
         while (!expectedClosingBrackets()) {
-            token = scanner.nextToken()
-            when (token?.text) {
-                "while" -> {
-                    Loop(token, scanner)
+            val tokenText = TokenSingleton.text
+            when {
+                TokenSingleton.type == TokenTypes.TK_IDENTIFIER -> {
+                    Attribution(scanner)
                 }
-                "if" -> {
-                    ConditionalExpression(token, scanner)
+                tokenText == "while" -> {
+                    Loop(scanner)
+                }
+                tokenText == "if" -> {
+                    ConditionalExpression(scanner)
+                    jump = true
                 }
                 //Declaration
-                "int", "float", "char" -> {
-                    Declaration(token, scanner)
+                tokenText == "int" || tokenText == "float" || tokenText == "char" -> {
+                    Declaration(scanner)
                 }
             }
         }
@@ -33,14 +39,16 @@ class Block(var token: Token?, val scanner: Scanner) {
     }
 
     private fun expectedOpenBrackets() {
-        token = scanner.nextToken()
-        if (token!!.text != "{") {
+        scanner.nextToken()
+        if (TokenSingleton.text != "{") {
             throw SyntaxException("'{' expected, found '${scanner.term}'", scanner.term)
         }
     }
 
     private fun expectedClosingBrackets(): Boolean {
-        token = scanner.nextToken() ?: throw SyntaxException("Closing '}' expected", scanner.term)
-        return token?.text == "}"
+        if(!jump) scanner.nextToken()
+        jump = false
+        TokenSingleton.text ?: throw SyntaxException("Closing '}' expected", scanner.term)
+        return TokenSingleton.text == "}"
     }
 }

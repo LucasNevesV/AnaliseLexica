@@ -1,9 +1,12 @@
 int main() {
 
     int b = 0;
-    int x = 15;
+    int x = 15.5;
 
     if (b == x) {
-        b = b +
+        b = b + a;
+    }
+    if (b == x) {
+        b = b + a
     }
 }

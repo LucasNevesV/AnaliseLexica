@@ -4,25 +4,24 @@ import Scanner
 import Token
 import exception.SyntaxException
 
-class ConditionalOperation(private var token: Token?, private val scanner: Scanner) {
+class ConditionalOperation(private val scanner: Scanner) {
     init {
         conditional()
     }
 
     private fun conditional(){
-        Arithmetic(token, scanner)
+        Arithmetic(scanner)
 
         expectRelationalOperator()
-        Arithmetic(token, scanner)
+        Arithmetic(scanner)
     }
 
     private fun checkWhile(): Boolean {
-        return token!!.text == "while"
+        return TokenSingleton.text == "while"
     }
 
     private fun expectRelationalOperator(){
-        token = scanner.cuurentToken
-        if (token!!.type != TokenTypes.TK_RELATIONAL_OPERATOR) {
+        if (TokenSingleton.type != TokenTypes.TK_RELATIONAL_OPERATOR || TokenSingleton.text == "=") {
             throw SyntaxException("'relational operator' expected, found '${scanner.term}'", scanner.term)
         }
     }

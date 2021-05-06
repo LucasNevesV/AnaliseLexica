@@ -1,8 +1,13 @@
-//data class Token(var type: TokenTypes, val text: String? = null)
+data class Token(var type: TokenTypes, val text: String? = null)
 
-object Token{
+object TokenSingleton{
     var type: TokenTypes? = null
-    val text: String? = null
+    var text: String? = null
+
+    fun init(token: Token?){
+        this.type = token?.type
+        this.text = token?.text
+    }
 }
 
 enum class TokenTypes(private val description: String) {
