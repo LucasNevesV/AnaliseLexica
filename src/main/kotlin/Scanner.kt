@@ -8,7 +8,7 @@ class Scanner(filename: String) {
     private var pos: Int = 0
 
     private var currentChar: Char = '\u0000'
-    private var term: String = ""
+    var term: String = ""
 
     init {
         try {
@@ -33,7 +33,12 @@ class Scanner(filename: String) {
         while (token == null) {
             currentChar = nextChar()
             when (estado) {
-                0 -> token = estado0()
+                0 -> {
+                    if (isEOF()){
+                        break
+                    }
+                    token = estado0()
+                }
                 1 -> token = estado1()
                 2 -> token = estado2()
                 3 -> token = estado3()
@@ -45,6 +50,10 @@ class Scanner(filename: String) {
     //Estado Inicial
     private fun estado0(): Token? {
         when {
+            !isChar(currentChar) && specialChars(currentChar.toString())-> {
+                term += currentChar
+                return Token(TokenTypes.TK_SPECIAL_CHAR, term)
+            }
             isChar(currentChar) || specialChars(currentChar.toString()) || currentChar == '_' -> {
                 term += currentChar
                 estado = 1
@@ -77,7 +86,7 @@ class Scanner(filename: String) {
                 term += currentChar
                 estado = 1
             }
-            isSpace(currentChar) || isOperator(currentChar) || isEOF(currentChar) || specialChars(currentChar.toString()) -> {
+            isSpace(currentChar) || isOperator(currentChar) || isArithmeticOperator(currentChar.toString()) || isEOF(currentChar) || specialChars(currentChar.toString()) -> {
                 if (!isEOF(currentChar))
                     back()
 

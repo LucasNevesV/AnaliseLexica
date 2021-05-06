@@ -1,6 +1,7 @@
-main teste(){
-    int numero 10{
-    if(nume >= 5.6){
+int main() {
 
-    }
-}
+    int b = 0;
+    int x = 15;
+
+    if (b == x) {
+        b = b +

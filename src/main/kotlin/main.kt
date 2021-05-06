@@ -1,18 +1,16 @@
 import exception.LexicalException
+import exception.SyntaxException
+import parser.Parser
 
 fun main(args: Array<String>) {
     try {
         val scanner = Scanner("input.txt")
-        var token: Token?
+        val parser = Parser(scanner)
 
-        do {
-            token = scanner.nextToken()
-
-            if (token != null) {
-                println(token)
-            }
-        } while (token != null)
+        parser.program()
     } catch (ex: LexicalException) {
         println("Lexical ERROR at '${ex.term}'; Message: ${ex.message}")
+    } catch (ex: SyntaxException) {
+        println("Syntax ERROR at '${ex.term}'; Message: ${ex.message}")
     }
 }
