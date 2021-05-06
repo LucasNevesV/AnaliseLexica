@@ -15,6 +15,7 @@ class Block(var token: Token?, val scanner: Scanner) {
         expectedOpenBrackets()
 
         while (!expectedClosingBrackets()) {
+            token = scanner.nextToken()
             when (token?.text) {
                 "while" -> {
                     Loop(token, scanner)

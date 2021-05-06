@@ -1,4 +1,9 @@
-data class Token(var type: TokenTypes, val text: String? = null)
+//data class Token(var type: TokenTypes, val text: String? = null)
+
+object Token{
+    var type: TokenTypes? = null
+    val text: String? = null
+}
 
 enum class TokenTypes(private val description: String) {
     TK_IDENTIFIER("IDENTIFIER"),

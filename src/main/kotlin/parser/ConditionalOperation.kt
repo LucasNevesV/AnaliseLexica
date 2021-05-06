@@ -21,7 +21,7 @@ class ConditionalOperation(private var token: Token?, private val scanner: Scann
     }
 
     private fun expectRelationalOperator(){
-        token = scanner.nextToken()
+        token = scanner.cuurentToken
         if (token!!.type != TokenTypes.TK_RELATIONAL_OPERATOR) {
             throw SyntaxException("'relational operator' expected, found '${scanner.term}'", scanner.term)
         }

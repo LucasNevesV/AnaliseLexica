@@ -28,7 +28,7 @@ class ConditionalExpression(private var token: Token?, private val scanner: Scan
     }
 
     private fun elseExists(): Boolean {
-        token = scanner.nextToken()
+        token = scanner.cuurentToken
         if (token!!.text == "else") {
             return true
         }
@@ -44,7 +44,7 @@ class ConditionalExpression(private var token: Token?, private val scanner: Scan
     }
 
     private fun expectClosingParenthesis(){
-        token = scanner.nextToken()
+        token = scanner.cuurentToken
         if (token!!.text != ")") {
             throw SyntaxException("')' expected, found '${scanner.term}'", scanner.term)
         }
