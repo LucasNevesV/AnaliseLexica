@@ -112,6 +112,9 @@ class Scanner(filename: String) {
             !isChar(currentChar) || isEOF(currentChar) -> {
                 if (!isEOF(currentChar))
                     back()
+                if(term.contains('.')){
+                    return Token(TokenTypes.TK_FLOAT, term)
+                }
                 return Token(TokenTypes.TK_NUMBER, term)
             }
             else -> throw LexicalException("Unrecognized Number", term + currentChar)

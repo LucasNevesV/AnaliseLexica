@@ -2,6 +2,7 @@ package parser
 
 import Scanner
 import Token
+import exception.SemanticException
 import exception.SyntaxException
 
 class Attribution(private val scanner: Scanner) {

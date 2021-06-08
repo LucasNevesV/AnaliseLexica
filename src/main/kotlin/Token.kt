@@ -12,7 +12,8 @@ object TokenSingleton{
 
 enum class TokenTypes(private val description: String) {
     TK_IDENTIFIER("IDENTIFIER"),
-    TK_NUMBER("NUMBER"),
+    TK_NUMBER("int"),
+    TK_FLOAT("float"),
     TK_RELATIONAL_OPERATOR("RELATIONAL OPERATOR"),
     TK_ARITHMETIC_OPERATOR("ARITHMETIC OPERATOR"),
     TK_RESERVED_WORD("RESERVED WORD"),

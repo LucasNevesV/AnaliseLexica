@@ -2,6 +2,7 @@ package parser
 
 import Scanner
 import Token
+import exception.SemanticException
 import exception.SyntaxException
 
 class Arithmetic(val scanner: Scanner) {
@@ -10,7 +11,14 @@ class Arithmetic(val scanner: Scanner) {
     }
 
     private fun arithmetic() {
-        expectNumberOrIdentifier()
+        if (Symbols.currentSymbol?.type == TokenTypes.TK_NUMBER.toString()) {
+            expectNumberOrIdentifier()
+        } else if (Symbols.currentSymbol?.type == TokenTypes.TK_FLOAT.toString()) {
+            expectFloatOrIdentifier()
+        }else{
+            scanner.nextToken()
+        }
+
         arithmeticLoop()
     }
 
@@ -18,7 +26,13 @@ class Arithmetic(val scanner: Scanner) {
         val token = scanner.nextToken()
         if (token != null && checkCompatibility()) {
             expectArithmeticOperator()
-            expectNumberOrIdentifier()
+            if (Symbols.currentSymbol?.type == TokenTypes.TK_NUMBER.toString()) {
+                expectNumberOrIdentifier()
+            } else if (Symbols.currentSymbol?.type == TokenTypes.TK_FLOAT.toString()) {
+                expectFloatOrIdentifier()
+            }else{
+                scanner.nextToken()
+            }
             arithmeticLoop()
         }
     }
@@ -34,7 +48,52 @@ class Arithmetic(val scanner: Scanner) {
     private fun expectNumberOrIdentifier() {
         scanner.nextToken()
         if (TokenSingleton.type != TokenTypes.TK_IDENTIFIER && TokenSingleton.type != TokenTypes.TK_NUMBER) {
-            throw SyntaxException("'identifier or number Expected' expected, found '${scanner.term}'", scanner.term)
+            throw SemanticException(
+                "identifier or int expected, found ${TokenSingleton.type} '${scanner.term}'",
+                scanner.term
+            )
+        }
+
+        if (TokenSingleton.type == TokenTypes.TK_IDENTIFIER) {
+            val sameSymbol =
+                Symbols.value.find {
+                    it.name == TokenSingleton.text.orEmpty() &&
+                            it.scope <= Symbols.currentScope &&
+                            it.type == "int"
+                }
+
+            if (sameSymbol == null){
+                throw SemanticException(
+                    "identifier of type 'int' expected, found '${scanner.term}'",
+                    scanner.term
+                )
+            }
+        }
+    }
+
+    private fun expectFloatOrIdentifier() {
+        scanner.nextToken()
+        if (TokenSingleton.type != TokenTypes.TK_IDENTIFIER && TokenSingleton.type != TokenTypes.TK_FLOAT) {
+            throw SemanticException(
+                "identifier or float expected, found ${TokenSingleton.type} '${scanner.term}'",
+                scanner.term
+            )
+        }
+
+        if (TokenSingleton.type == TokenTypes.TK_IDENTIFIER) {
+            val sameSymbol =
+                Symbols.value.find {
+                    it.name == TokenSingleton.text.orEmpty() &&
+                            it.scope <= Symbols.currentScope &&
+                            it.type == "float"
+                }
+
+            if (sameSymbol == null){
+                throw SemanticException(
+                    "identifier of type 'float' expected, found '${scanner.term}'",
+                    scanner.term
+                )
+            }
         }
     }
 

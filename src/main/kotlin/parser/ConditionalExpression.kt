@@ -18,7 +18,10 @@ class ConditionalExpression(private val scanner: Scanner) {
         Block(scanner)
 
         if (elseExists()){
+            Symbols.currentScope += 1
             Block(scanner)
+            Symbols.currentScope -= 1
+            scanner.nextToken()
         }
     }
 
