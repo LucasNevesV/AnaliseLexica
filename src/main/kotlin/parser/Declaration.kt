@@ -5,10 +5,12 @@ import TokenSingleton
 import TokenTypes
 import exception.SemanticException
 import exception.SyntaxException
+import generateCode.Symbol
+import generateCode.Symbols
 
 class Declaration(private val scanner: Scanner) {
 
-    lateinit var typeDeclaration: String
+    private lateinit var typeDeclaration: String
 
     init {
         declaration()
@@ -30,8 +32,12 @@ class Declaration(private val scanner: Scanner) {
             )
         }
 
-        Symbols.value += Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope)
+//        val pos = scanner.pos
+//        scanner.nextToken()
+        Symbols.addSymbol(Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope, TokenSingleton.text))
         Symbols.currentSymbol = Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope)
+//        scanner.pos = pos
+
         if (isAttributionOperator()) {
             Arithmetic(scanner)
         }

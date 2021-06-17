@@ -4,6 +4,7 @@ import Scanner
 import Token
 import exception.SemanticException
 import exception.SyntaxException
+import generateCode.Symbols
 
 class Arithmetic(val scanner: Scanner) {
     init {

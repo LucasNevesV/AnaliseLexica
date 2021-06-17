@@ -5,7 +5,7 @@ class Scanner(filename: String) {
 
     private lateinit var content: CharArray
     private var estado: Int = 0
-    private var pos: Int = 0
+    var pos: Int = 0
 
     private var currentChar: Char = '\u0000'
     var term: String = ""

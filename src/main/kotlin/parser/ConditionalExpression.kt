@@ -4,6 +4,7 @@ import Scanner
 import Token
 import TokenSingleton
 import exception.SyntaxException
+import generateCode.Symbols
 
 class ConditionalExpression(private val scanner: Scanner) {
     init {

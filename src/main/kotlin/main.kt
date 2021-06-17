@@ -1,8 +1,8 @@
 import exception.LexicalException
 import exception.SemanticException
 import exception.SyntaxException
+import generateCode.Symbols
 import parser.Parser
-import parser.Symbols
 
 fun main(args: Array<String>) {
     try {
@@ -13,6 +13,8 @@ fun main(args: Array<String>) {
         println("Compiled successfully !!")
 
         println(Symbols.value)
+
+        println(Symbols.finalCode)
     } catch (ex: LexicalException) {
         println("Lexical ERROR at '${ex.term}'; Message: ${ex.message}")
     } catch (ex: SyntaxException) {

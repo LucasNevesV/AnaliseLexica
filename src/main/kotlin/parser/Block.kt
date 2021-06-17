@@ -3,13 +3,7 @@ package parser
 import Scanner
 import exception.SemanticException
 import exception.SyntaxException
-
-data class Symbol(val name: String, val type: String, val scope: Int)
-object Symbols {
-    val value: MutableList<Symbol> = mutableListOf<Symbol>()
-    var currentScope: Int = -1
-    var currentSymbol: Symbol? = null
-}
+import generateCode.Symbols
 
 class Block(val scanner: Scanner) {
 
