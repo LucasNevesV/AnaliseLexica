@@ -19,57 +19,81 @@ object Symbols {
         finalCode.appendLine("${symbol.code} = ${symbol.value}")
     }
 
+//    fun addExpression(symbol: Symbol, expression: String) {
+////        symbol.code = "t${count}"
+////        value += symbol
+////        finalCode.appendLine("t${count} = $expression")
+////        count++
+////
+////        symbol.code = "t${count}"
+////        value += symbol
+//
+//        val expressionSplitMinus = expression.split('-')
+//
+//        for (minusSplit in expressionSplitMinus) {
+//            var minus: String = minusSplit
+//
+//
+//            val expressionSplit1Plus = minusSplit.split('+')
+//            var plus: String = ""
+//            for (plusSplit in expressionSplit1Plus) {
+//
+//                val expressionSplit2Div = plusSplit.split('/')
+//                for (divisionSplit in expressionSplit2Div) {
+//                    symbol.code = "t${count}"
+//                    value += symbol
+//                    finalCode.appendLine("t${count} = $divisionSplit")
+//
+//
+//                    val expressionSplit3Mult = divisionSplit.split('*')
+//                    if (expressionSplit3Mult.size > 1) {
+//                        plus = plusSplit.replace(divisionSplit, "t$count")
+//                        minus = minus.replace(divisionSplit, plus)
+//                    }
+//                    count++
+//                }
+//            }
+//            val paresPlus = plus.split("+")
+//            //for ()
+//        }
+//    }
+
+    private var finalExpression = ""
     fun addExpression(symbol: Symbol, expression: String) {
-        symbol.code = "t${count}"
-        value += symbol
-        finalCode.appendLine("t${count} = $expression")
-        count++
-
-        symbol.code = "t${count}"
-        value += symbol
-        return
-
-        val expressionSplitMinus = expression.split('-')
-
-        for (minusSplit in expressionSplitMinus) {
-            var minus: String = minusSplit
-
-
-            val expressionSplit1Plus = minusSplit.split('+')
-            var plus: String = ""
-            for (plusSplit in expressionSplit1Plus) {
-
-                val expressionSplit2Div = plusSplit.split('/')
-                for (divisionSplit in expressionSplit2Div) {
-                    symbol.code = "t${count}"
-                    value += symbol
-                    finalCode.appendLine("t${count} = $divisionSplit")
-
-
-                    val expressionSplit3Mult = divisionSplit.split('*')
-                    if (expressionSplit3Mult.size > 1) {
-                        plus = plusSplit.replace(divisionSplit, "t$count")
-                        minus = minus.replace(divisionSplit, plus)
-                    }
-                    count++
-                }
-            }
-            val paresPlus = plus.split("+")
-            //for ()
+        if (!expression.any { operators.contains(it) }){
+            addSymbol(symbol, expression, true)
+            return
         }
-    }
-
-//    fun test(symbol: Symbol, operator: String) {
 //        symbol.code = "t${count}"
 //        value += symbol
-//        finalCode.appendLine("t${count} = $divisionSplit")
-//
-//        if (divisionSplit.split('*').size > 1){
-//            plus = plusSplit.replace(divisionSplit, "t$count")
-//            //minus = minus.replace(divisionSplit, plus)
-//        }
+//        finalCode.appendLine("t${count} = $expression")
 //        count++
-//    }
+//
+//        symbol.code = "t${count}"
+//        value += symbol
+
+        finalExpression = expression
+        var aux = ""
+
+        val expressionSplitMinus = expression.split('-')
+        for (minus in expressionSplitMinus.indices){
+            val plusSplit = expressionSplitMinus[minus].split('+')
+            for (plus in plusSplit.indices){
+                aux = plusSplit[plus]
+                val divSplit = plusSplit[plus].split('/')
+                for (div in divSplit.indices){
+                    val replace = addSymbol(symbol, divSplit[div])
+                    if (replace != null)
+                        aux = aux.replace(replace, "t${count - 1}")
+                }
+                if (divSplit.size > 1)
+                    addSymbol(symbol, aux)
+            }
+            //addSymbol(symbol, minus)
+        }
+
+    }
+
 
     fun addIf(operator: String?, operatorOne: String, operatorTwo: String) {
         val opositeOperator = getOpositeOperator(operator)
@@ -96,10 +120,22 @@ object Symbols {
         "==" to "!="
     )
 
-    fun addSymbol(symbol: Symbol, new: String) {
+    fun addSymbol(symbol: Symbol, replace: String, ignore:Boolean = false): String? {
+        if (!replace.any { operators.contains(it) } && !ignore){
+            return null
+        }
         symbol.code = "t${count}"
+        symbol.value = replace
         value += symbol
-        finalCode.appendLine("t${count} = $new")
+        finalCode.appendLine("t${count} = $replace")
+
+        finalExpression = finalExpression.replace(replace, "t${count}")
         count++
+
+        return replace
     }
+
+    private val operators = listOf(
+        '+', '-', '*', '/'
+    )
 }

@@ -2,7 +2,7 @@ int main() {
 
     int b = 0, e = 5;
 
-    int c = e + 555 * b + 58 * e + 5 * 8;
+    int c = e + 555 * b + 58 * e + 5 * 8 / 42 + 8;
     float d = 3.4;
 
     b = e;
