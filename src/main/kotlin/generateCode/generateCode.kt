@@ -60,7 +60,7 @@ object Symbols {
 
     private var finalExpression = ""
     fun addExpression(symbol: Symbol, expression: String) {
-        if (!expression.any { operators.contains(it) }){
+        if (!expression.any { operators.contains(it) }) {
             addSymbol(symbol, expression, true)
             return
         }
@@ -76,12 +76,12 @@ object Symbols {
         var aux = ""
 
         val expressionSplitMinus = expression.split('-')
-        for (minus in expressionSplitMinus.indices){
+        for (minus in expressionSplitMinus.indices) {
             val plusSplit = expressionSplitMinus[minus].split('+')
-            for (plus in plusSplit.indices){
+            for (plus in plusSplit.indices) {
                 aux = plusSplit[plus]
                 val divSplit = plusSplit[plus].split('/')
-                for (div in divSplit.indices){
+                for (div in divSplit.indices) {
                     val replace = addSymbol(symbol, divSplit[div])
                     if (replace != null)
                         aux = aux.replace(replace, "t${count - 1}")
@@ -91,7 +91,22 @@ object Symbols {
             }
             //addSymbol(symbol, minus)
         }
+        while (split().size > 1) {
+            val operator = finalExpression.first { it == '+' || it == '-' }
+            val split = finalExpression.split("[+-]".toRegex(), 2)
+            val firstNumber = split[0]
 
+            val newExpression = split[1].split("[+-]".toRegex(), 2)
+            val secondNumber = newExpression.first()
+            val value = "$firstNumber $operator $secondNumber"
+            addSymbol(symbol, value)
+            finalExpression = newExpression.last()
+        }
+
+    }
+
+    fun split(): List<String> {
+        return finalExpression.split("[+-]".toRegex())
     }
 
 
@@ -104,7 +119,7 @@ object Symbols {
     }
 
     fun endIf() {
-        if (conditionStack.isNotEmpty()){
+        if (conditionStack.isNotEmpty()) {
             val jump = conditionStack.removeLast()
             finalCode.appendLine("$jump:")
         }
@@ -120,8 +135,8 @@ object Symbols {
         "==" to "!="
     )
 
-    fun addSymbol(symbol: Symbol, replace: String, ignore:Boolean = false): String? {
-        if (!replace.any { operators.contains(it) } && !ignore){
+    fun addSymbol(symbol: Symbol, replace: String, ignore: Boolean = false): String? {
+        if (!replace.any { operators.contains(it) } && !ignore) {
             return null
         }
         symbol.code = "t${count}"
