@@ -1,8 +1,10 @@
 package parser
 
 import Scanner
-import Token
+import TokenSingleton
+import TokenTypes
 import exception.SyntaxException
+import generateCode.Symbols
 
 class ConditionalOperation(private val scanner: Scanner) {
     init {
@@ -10,19 +12,22 @@ class ConditionalOperation(private val scanner: Scanner) {
     }
 
     private fun conditional(){
-        Arithmetic(scanner)
+        val operatorOne = Arithmetic(scanner).expression
 
-        expectRelationalOperator()
-        Arithmetic(scanner)
+        val operator = expectRelationalOperator()
+        val operatorTwo = Arithmetic(scanner).expression
+
+        Symbols.addIf(operator, operatorOne, operatorTwo)
     }
 
     private fun checkWhile(): Boolean {
         return TokenSingleton.text == "while"
     }
 
-    private fun expectRelationalOperator(){
+    private fun expectRelationalOperator(): String? {
         if (TokenSingleton.type != TokenTypes.TK_RELATIONAL_OPERATOR || TokenSingleton.text == "=") {
             throw SyntaxException("'relational operator' expected, found '${scanner.term}'", scanner.term)
         }
+        return TokenSingleton.text
     }
 }

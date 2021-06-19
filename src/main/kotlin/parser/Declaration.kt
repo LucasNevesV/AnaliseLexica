@@ -32,14 +32,20 @@ class Declaration(private val scanner: Scanner) {
             )
         }
 
+//        //region AddSymbol
 //        val pos = scanner.pos
+//        val token = TokenSingleton.token
 //        scanner.nextToken()
-        Symbols.addSymbol(Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope, TokenSingleton.text))
-        Symbols.currentSymbol = Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope)
+//        Symbols.addSymbol(Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope, TokenSingleton.text))
+//        Symbols.currentSymbol = Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope)
 //        scanner.pos = pos
+//        TokenSingleton.init(token)
+//        //endregion AddSymbol
 
         if (isAttributionOperator()) {
-            Arithmetic(scanner)
+            Symbols.currentSymbol = Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope)
+            val value = Arithmetic(scanner).expression
+            Symbols.addExpression(Symbol(name.orEmpty(), typeDeclaration, Symbols.currentScope, value), value)
         }
 
         if (isComma()) {

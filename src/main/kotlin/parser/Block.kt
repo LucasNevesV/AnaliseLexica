@@ -21,13 +21,6 @@ class Block(val scanner: Scanner) {
             val tokenText = TokenSingleton.text
             when {
                 TokenSingleton.type == TokenTypes.TK_IDENTIFIER -> {
-
-                    Symbols.currentSymbol =
-                        Symbols.value.find { it.name == TokenSingleton.text && it.scope <= Symbols.currentScope }
-                            ?: throw SemanticException(
-                                "Variable '${TokenSingleton.text}' not declared",
-                                TokenSingleton.text.orEmpty()
-                            )
                     Attribution(scanner)
                 }
                 tokenText == "while" -> {
@@ -43,6 +36,7 @@ class Block(val scanner: Scanner) {
                 }
             }
         }
+        Symbols.endIf()
         Symbols.currentScope -= 1
     }
 

@@ -4,6 +4,8 @@ import Scanner
 import Token
 import exception.SemanticException
 import exception.SyntaxException
+import generateCode.Symbol
+import generateCode.Symbols
 
 class Attribution(private val scanner: Scanner) {
     init {
@@ -11,11 +13,19 @@ class Attribution(private val scanner: Scanner) {
     }
 
     private fun attribution(loop:Boolean = false){
+        Symbols.currentSymbol =
+            Symbols.value.find { it.name == TokenSingleton.text && it.scope <= Symbols.currentScope }
+                ?: throw SemanticException(
+                    "Variable '${TokenSingleton.text}' not declared",
+                    TokenSingleton.text.orEmpty()
+                )
         if (loop) expectIdentifier()
 
         expectNextAttrOperatorOrSemicolonOrComma()
 
-        Arithmetic(scanner)
+        val value = Arithmetic(scanner).expression
+        Symbols.currentSymbol!!.value = value
+        Symbols.updateSymbol(Symbols.currentSymbol!!)
 
         expectCurrentAttrOperatorOrSemicolonOrComma()
 

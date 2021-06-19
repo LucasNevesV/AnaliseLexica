@@ -3,8 +3,10 @@ data class Token(var type: TokenTypes, val text: String? = null)
 object TokenSingleton{
     var type: TokenTypes? = null
     var text: String? = null
+    var token: Token? = null
 
     fun init(token: Token?){
+        this.token = token
         this.type = token?.type
         this.text = token?.text
     }
